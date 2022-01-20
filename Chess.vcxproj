@@ -152,6 +152,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Chess.cpp" />
+    <ClCompile Include="Piece.cpp" />
+    <ClCompile Include="Station.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Piece.h" />
+    <ClInclude Include="Station.h" />
+    <ClInclude Include="UserInterface.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\arial.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Sprites\0-0.png" />
+    <Image Include="Resources\Sprites\0-1.png" />
+    <Image Include="Resources\Sprites\1-0.png" />
+    <Image Include="Resources\Sprites\1-1.png" />
+    <Image Include="Resources\Sprites\2-0.png" />
+    <Image Include="Resources\Sprites\2-1.png" />
+    <Image Include="Resources\Sprites\3-0.png" />
+    <Image Include="Resources\Sprites\3-1.png" />
+    <Image Include="Resources\Sprites\4-0.png" />
+    <Image Include="Resources\Sprites\4-1.png" />
+    <Image Include="Resources\Sprites\5-0.png" />
+    <Image Include="Resources\Sprites\5-1.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

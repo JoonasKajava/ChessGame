@@ -18,5 +18,68 @@
     <ClCompile Include="Chess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Piece.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Station.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Piece.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Station.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\arial.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Sprites\0-0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\0-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\1-0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\1-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\2-0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\2-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\3-0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\3-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\4-0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\4-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\5-0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sprites\5-1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

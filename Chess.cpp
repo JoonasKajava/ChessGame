@@ -1,22 +1,32 @@
 #include <SFML/Graphics.hpp>
-
+#include "UserInterface.h"
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(900, 900), "Chessbot");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    sf::RenderWindow window(sf::VideoMode(900, 900), "Chessbot", sf::Style::Titlebar | sf::Style::Close);
+    Station station;
+    UserInterface ui(&station);
 
     while (window.isOpen())
     {
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            switch (event.type)
+            {
+            case sf::Event::Closed:
                 window.close();
+                break;
+            case sf::Event::MouseButtonReleased:
+                if (event.mouseButton.button != sf::Mouse::Left) continue;
+                ui.checkPieceClick(&window);
+                break;
+            default:
+                break;
+            }
         }
 
-        window.clear();
-        window.draw(shape);
+        window.clear(sf::Color::White);
+        ui.drawBoard(&window);
         window.display();
     }
 
