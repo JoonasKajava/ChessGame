@@ -88,6 +88,7 @@ void UserInterface::checkPieceClick(sf::RenderWindow* window)
 	if (draggedPiece) {
 		station->board[index.y][index.x] = 0;
 		station->board[y][x] = draggedPiece;
+		draggedPiece->hasBeenMoved = true;
 	}
 	else {
 		Piece* piece = station->board[y][x];

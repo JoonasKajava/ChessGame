@@ -1,22 +1,27 @@
 #pragma once
 #include "SFML/Graphics.hpp";
-enum
+#include <list>
+#include "Move.h"
+enum Code
 {
-	Rook, Knight, Bishop, Queen, King, Pawn
+	ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN
 };
 
 enum { White, Black };
 
 class Piece {
-private:
+protected:
 	bool _isWhite;
 	unsigned char _code;
 	sf::Texture _texture;
 	sf::Sprite _sprite;
 	bool _isDragging;
+	
 public:
+	bool hasBeenMoved;
 	Piece(unsigned char code, bool isWhite);
 	Piece() {};
+	virtual void giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station, bool isWhite) = 0;
 	void setDragging(bool state);
 	bool isDragging();
 	void setCode(unsigned char code);
