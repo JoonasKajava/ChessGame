@@ -4,6 +4,5 @@
 class Station {
 public:
 	Station();
-	//void annaLaillisetSiirrot(std::list<Movements>& list);
-	Piece* board[8][8];
+	Piece *board[8][8];
 };

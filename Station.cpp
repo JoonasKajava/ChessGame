@@ -1,3 +1,4 @@
+#pragma once
 #include "Station.h"
 #include "Rook.h"
 #include "King.h"
@@ -12,7 +13,7 @@ Station::Station()
     {
         for (int x = 0; x < 8; x++)
         {
-            board[y][x] = 0;
+            board[y][x] = nullptr;
         }
     }
 
