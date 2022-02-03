@@ -3,7 +3,7 @@
 
 void Pawn::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station)
 {
-	signed char dir = this->getColor() ? -1 : 1;
+	signed char dir = this->getColor() ? 1 : -1;
 	sf::Vector2i front1(start.x, start.y + 1 * dir);
 	sf::Vector2i front2(start.x, start.y + 2 * dir);
 	sf::Vector2i frontLeft(start.x - 1, start.y + 1 * dir);

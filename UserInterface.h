@@ -16,4 +16,6 @@ public:
 	void drawBoard(sf::RenderWindow* window);
 	void checkPieceClick(sf::RenderWindow* window);
 
+	void movePiece(sf::Vector2i start, sf::Vector2i end);
+
 };

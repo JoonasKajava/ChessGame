@@ -36,7 +36,8 @@ void UserInterface::drawBoard(sf::RenderWindow* window)
 			else {
 				square.setFillColor((x + y) % 2 == 0 ? sf::Color(239, 216, 180) : sf::Color(181, 136, 99));
 			}
-			
+			square.setOutlineColor(sf::Color::Black);
+			square.setOutlineThickness(2.0f);
 			square.setPosition(sf::Vector2f(x * 100 + 100, y * 100));
 			window->draw(square);
 
@@ -84,6 +85,14 @@ void UserInterface::checkPieceClick(sf::RenderWindow* window)
 	}
 }
 
+void UserInterface::movePiece(sf::Vector2i start, sf::Vector2i end)
+{
+	Piece* piece = station->board[start.y][start.x];
+	station->board[start.y][start.x] = 0;
+	station->board[end.y][end.x] = piece;
+	if (start != end) this->draggedPiece->setMoved(true);
+}
+
 void UserInterface::startDrag(sf::Vector2i pos)
 {
 	if (this->draggedPiece) return;
@@ -110,21 +119,16 @@ void UserInterface::endDrag(sf::Vector2i pos)
 	// Do castle
 	if (this->draggedPiece->getCode() == KING && abs(dragStart.x - pos.x) > 1) {
 		if (pos.x - dragStart.x > 0) {
-			Piece* rook = station->board[pos.y][7];
-			rook->setMoved(true);
-			station->board[pos.y][5] = rook;
-			station->board[pos.y][7] = 0;
+			movePiece(sf::Vector2i(7, pos.y), sf::Vector2i(5, pos.y));
 		}
 		else {
-			Piece* rook = station->board[pos.y][0];
-			rook->setMoved(true);
-			station->board[pos.y][3] = rook;
-			station->board[pos.y][0] = 0;
+			movePiece(sf::Vector2i(0, pos.y), sf::Vector2i(3, pos.y));
 		}
 	}
-	station->board[this->dragStart.y][this->dragStart.x] = 0;
-	station->board[pos.y][pos.x] = this->draggedPiece;
-	if (this->dragStart != pos) this->draggedPiece->setMoved(true);
+	
+
+	movePiece(this->dragStart, pos);
+
 	this->draggedPiece->setDragging(false);
 	this->draggedPiece = 0;
 	for (char y = 0; y < 8; y++) for (char x = 0; x < 8; x++)
