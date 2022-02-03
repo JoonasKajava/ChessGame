@@ -8,16 +8,22 @@
 
 UserInterface::UserInterface(Station* _station)
 {
+	_font.loadFromFile("./Resources/arial.ttf");
 	station = _station;
+
+	_turnText.setFont(_font);
+	_turnText.setLetterSpacing(1.5f);
+	_turnText.setCharacterSize(58);
+
+	_turnText.setOutlineColor(sf::Color::Black);
+	_turnText.setOutlineThickness(2.0f);
 }
 
 void UserInterface::drawBoard(sf::RenderWindow* window)
 {
-	sf::Font font;
-	font.loadFromFile("./Resources/arial.ttf");
 
 	sf::Text text;
-	text.setFont(font);
+	text.setFont(_font);
 	text.setCharacterSize(64);
 	text.setFillColor(sf::Color::Black);
 
@@ -69,10 +75,24 @@ void UserInterface::drawBoard(sf::RenderWindow* window)
 
 }
 
+void UserInterface::drawStatus(sf::RenderWindow* window)
+{
+	_turnText.setFillColor(_isWhiteTurn ? sf::Color::White : sf::Color::Black);
+	sf::FloatRect bounds = _turnText.getGlobalBounds();
+
+	_turnText.setString(_isWhiteTurn ? "White turn" : "Black turn");
+	_turnText.setPosition(sf::Vector2f(900 + (320 / 2.0f - bounds.width / 2.0f), 400 - (bounds.height / 2.0f)));
+
+	window->draw(_turnText);
+
+	window->draw(_blackJail);
+	window->draw(_whiteJail);
+}
+
 void UserInterface::checkPieceClick(sf::RenderWindow* window)
 {
 	sf::Vector2i pos = sf::Mouse::getPosition(*window);
-	int x = (int)floor(pos.x / 100.0f)-1;
+	int x = (int)floor(pos.x / 100.0f) - 1;
 	int y = (int)floor(pos.y / 100.0f);
 	if (x < 0 || x > 7 || y < 0 || y > 7) return;
 	sf::Vector2i boardpos(x, y);
@@ -85,31 +105,40 @@ void UserInterface::checkPieceClick(sf::RenderWindow* window)
 	}
 }
 
-void UserInterface::movePiece(sf::Vector2i start, sf::Vector2i end)
+void UserInterface::movePiece(sf::Vector2i start, sf::Vector2i end, bool shouldEndTurn)
 {
+	if (start == end) return;
 	Piece* piece = station->board[start.y][start.x];
 	station->board[start.y][start.x] = 0;
+	Piece* captured = station->board[end.y][end.x];
+	if (captured) {
+		captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
+	}
+
 	station->board[end.y][end.x] = piece;
-	if (start != end) this->draggedPiece->setMoved(true);
+	if (shouldEndTurn) _isWhiteTurn = !_isWhiteTurn;
+	this->draggedPiece->setMoved(true);
+
 }
 
 void UserInterface::startDrag(sf::Vector2i pos)
 {
 	if (this->draggedPiece) return;
 	Piece* piece = station->board[pos.y][pos.x];
-	if (piece != 0) {
-		piece->setDragging(true);
-		this->draggedPiece = piece;
-		this->dragStart = pos;
+	if (!piece) return;
+	if (piece->getColor() != _isWhiteTurn) return;
+	piece->setDragging(true);
+	this->draggedPiece = piece;
+	this->dragStart = pos;
 
-		std::list<Move> moves;
-		if (this->draggedPiece) {
-			this->draggedPiece->giveMovements(moves, pos, station);
-			for (const Move& move : moves) {
-				this->legalMoves[move.end.x][move.end.y] = true;
-			}
+	std::list<Move> moves;
+	if (this->draggedPiece) {
+		this->draggedPiece->giveMovements(moves, pos, station);
+		for (const Move& move : moves) {
+			this->legalMoves[move.end.x][move.end.y] = true;
 		}
 	}
+
 }
 
 void UserInterface::endDrag(sf::Vector2i pos)
@@ -119,13 +148,13 @@ void UserInterface::endDrag(sf::Vector2i pos)
 	// Do castle
 	if (this->draggedPiece->getCode() == KING && abs(dragStart.x - pos.x) > 1) {
 		if (pos.x - dragStart.x > 0) {
-			movePiece(sf::Vector2i(7, pos.y), sf::Vector2i(5, pos.y));
+			movePiece(sf::Vector2i(7, pos.y), sf::Vector2i(5, pos.y), false);
 		}
 		else {
-			movePiece(sf::Vector2i(0, pos.y), sf::Vector2i(3, pos.y));
+			movePiece(sf::Vector2i(0, pos.y), sf::Vector2i(3, pos.y), false);
 		}
 	}
-	
+
 
 	movePiece(this->dragStart, pos);
 

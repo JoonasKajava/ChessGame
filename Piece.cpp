@@ -8,7 +8,6 @@ Piece::Piece(unsigned char code, bool isWhite)
 	_code = code;
 	_isWhite = isWhite;
 	_texture.loadFromFile("./Resources/Sprites/" + std::to_string(_code) + "-" + std::to_string(!_isWhite) + ".png");
-
 	_sprite.setTexture(_texture);
 	_sprite.setScale(2, 2);
 }
