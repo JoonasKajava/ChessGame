@@ -2,7 +2,8 @@
 #include "UserInterface.h"
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1220, 900), "Chessbot", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(1220, 900), "Nimi :D", sf::Style::Titlebar | sf::Style::Close);
+    window.setVerticalSyncEnabled(true);
     Station station;
     UserInterface ui(&station);
 
@@ -26,8 +27,8 @@ int main()
         }
 
         window.clear(sf::Color::White);
-        ui.drawBoard(&window);
         ui.drawStatus(&window);
+        ui.drawBoard(&window);
         window.display();
     }
 

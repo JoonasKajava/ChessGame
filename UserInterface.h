@@ -5,7 +5,7 @@
 
 class UserInterface {
 private:
-	bool _isWhiteTurn;
+	bool _isWhiteTurn = true;
 	sf::Font _font;
 	Piece* draggedPiece = 0;
 	sf::Vector2i dragStart;

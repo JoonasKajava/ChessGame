@@ -33,7 +33,7 @@ void King::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* st
             }
         }
     }
-    if (this->getCode() != KING) return;
+    if (typeid(*this) != typeid(King)) return;
     if (canCastle(Left, station)) moves.push_back(Move(start, sf::Vector2i(start.x - 2, start.y)));
     if (canCastle(Right, station)) moves.push_back(Move(start, sf::Vector2i(start.x + 2, start.y)));
 }
