@@ -31,7 +31,7 @@ void Rook::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* st
 			sf::Vector2i pos(x, y);
 			isValid = isValidPosition(pos, station, shouldStop);
 			if (isValid) {
-				moves.push_back(Move(start, pos));
+				moves.push_back(Move(start, pos, getColor()));
 			}
 			
 			counter++;
