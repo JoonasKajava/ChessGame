@@ -3,6 +3,7 @@
 
 void Pawn::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station)
 {
+	std::list<Move> movesTemp;
 	signed char dir = this->getColor() ? 1 : -1;
 	sf::Vector2i front1(start.x, start.y + 1 * dir);
 	sf::Vector2i front2(start.x, start.y + 2 * dir);
@@ -10,20 +11,41 @@ void Pawn::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* st
 	sf::Vector2i frontRight(start.x + 1, start.y + 1 * dir);
 
 	if (isValidPosition(front1, station) && !station->board[front1.y][front1.x]) {
-		moves.push_back(Move(start, front1));
+		movesTemp.push_back(Move(start, front1));
 		if (!this->getHasBeenMoved() && !station->board[front2.y][front2.x]) {
-			moves.push_back(Move(start, front2));
+			movesTemp.push_back(Move(start, front2));
 		}
 	}
 	if (isValidPosition(frontLeft, station)) {
 		Piece* FL = station->board[frontLeft.y][frontLeft.x];
-		if (FL && FL->getColor() != this->getColor()) moves.push_back(Move(start, frontLeft));
+		if (FL && FL->getColor() != this->getColor()) movesTemp.push_back(Move(start, frontLeft));
 	}
 
 	if (isValidPosition(frontRight, station)) {
 		Piece* FR = station->board[frontRight.y][frontRight.x];
-		if (FR && FR->getColor() != this->getColor()) moves.push_back(Move(start, frontRight));
+		if (FR && FR->getColor() != this->getColor()) movesTemp.push_back(Move(start, frontRight));
 	}
 
+	for (Move& move : movesTemp) {
+		givePromotionMovements(movesTemp, &move, station);
+	}
+
+	moves.merge(movesTemp);
+	
+
+}
+int possiblePromotions[] = {QUEEN, ROOK, BISHOP, KNIGHT};
+
+void Pawn::givePromotionMovements(std::list<Move>& moves, Move* move, Station* station)
+{
+	int row = _isWhite ? 7 : 0;
+	
+	if (move->end.y == row) {
+		for (int promotion : possiblePromotions) {
+			Move promotionMove(move->start, move->end);
+			promotionMove.promotion = promotion;
+			moves.push_back(promotionMove);
+		}
+	}
 
 }
