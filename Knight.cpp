@@ -17,7 +17,7 @@ void Knight::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* 
 
 	for (sf::Vector2i& pos : positions) {
 		if (isValidPosition(pos, station)) {
-			moves.push_back(Move(start, pos));
+			moves.push_back(Move(start, pos, getColor()));
 		}
 	}
 

@@ -11,7 +11,7 @@ void Bishop::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* 
 		Piece* slotPiece = station->board[pos.y][pos.x];
 		bool shouldStop = false;
 		while (isValidPosition(pos, station, shouldStop)) {
-			moves.push_back(Move(start, pos));
+			moves.push_back(Move(start, pos, getColor()));
 			if (shouldStop) {
 				break;
 			}
