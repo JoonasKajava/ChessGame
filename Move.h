@@ -7,7 +7,7 @@ public:
 		this->start = _start;
 		this->end = _end;
 		this->isWhite = _isWhite;
-		this->promotion = 0;
+		this->promotion = -1;
 	}
 	sf::Vector2i start;
 	sf::Vector2i end;
@@ -17,5 +17,5 @@ public:
 	{
 		return start == other.start && end == other.end && isWhite == other.isWhite && promotion == other.promotion;
 	}
-	int promotion;
+	char promotion;
 };

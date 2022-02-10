@@ -23,6 +23,7 @@ protected:
 public:
 	
 	Piece(unsigned char code, bool isWhite);
+	Piece(Piece& other);
 	Piece() {};
 	virtual void giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station) = 0;
 	bool isValidPosition(sf::Vector2i pos, Station* station, bool& shouldStop);

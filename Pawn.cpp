@@ -1,5 +1,6 @@
 #pragma once
 #include "Pawn.h"
+#include "PromotionSelect.h"
 
 void Pawn::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station)
 {
@@ -35,14 +36,13 @@ void Pawn::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* st
 	
 
 }
-int possiblePromotions[] = {QUEEN, ROOK, BISHOP, KNIGHT};
 
 void Pawn::givePromotionMovements(std::list<Move>& moves, Move* move, Station* station)
 {
 	int row = _isWhite ? 7 : 0;
 	
 	if (move->end.y == row) {
-		for (int promotion : possiblePromotions) {
+		for (int promotion : PROMOTIONS) {
 			Move promotionMove(move->start, move->end, move->isWhite);
 			promotionMove.promotion = promotion;
 			moves.push_back(promotionMove);

@@ -92,7 +92,30 @@ void Station::giveAllLegalMoves(std::list<Move>& list)
 void Station::movePiece(Move move, bool shouldEndTurn, bool dry)
 {
 	if (move.start == move.end) return;
+
 	Piece* piece = board[move.start.y][move.start.x];
+
+	if (move.promotion > 0) {
+		delete piece;
+		switch (move.promotion)
+		{
+		case QUEEN:
+			piece = new Queen(move.isWhite);
+			break;
+		case ROOK:
+			piece = new Rook(move.isWhite);
+			break;
+		case BISHOP:
+			piece = new Bishop(move.isWhite);
+			break;
+		case KNIGHT:
+			piece = new Knight(move.isWhite);
+			break;
+		default:
+			break;
+		}
+	}
+	
 	board[move.start.y][move.start.x] = 0;
 	Piece* captured = board[move.end.y][move.end.x];
 	if (captured) {

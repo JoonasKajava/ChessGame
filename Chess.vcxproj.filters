@@ -54,6 +54,9 @@
     <ClCompile Include="Jail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PromotionSelect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Piece.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files\Pieces</Filter>
     </ClInclude>
     <ClInclude Include="Jail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PromotionSelect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

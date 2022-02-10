@@ -1,6 +1,7 @@
 #pragma once
 #include "Station.h"
 #include "SFML/Graphics.hpp"
+#include "PromotionSelect.h"
 
 class UserInterface {
 private:
@@ -8,7 +9,12 @@ private:
 	Piece* draggedPiece = 0;
 	sf::Vector2i dragStart;
 
+	PromotionSelect _promotionSelect = PromotionSelect(sf::Vector2f(910, 325), sf::Vector2f(300, 150));
+
 	sf::Text _turnText;
+
+	bool promoteBeforeMove = false;
+	Move* promotionMove = nullptr;
 
 	void startDrag(sf::Vector2i pos);
 	void endDrag(sf::Vector2i pos);
@@ -19,5 +25,6 @@ public:
 	void drawBoard(sf::RenderWindow* window);
 	void drawStatus(sf::RenderWindow* window);
 	void checkPieceClick(sf::RenderWindow* window);
+	void checkPromotionClick(sf::RenderWindow* window);
 
 };

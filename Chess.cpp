@@ -20,6 +20,7 @@ int main()
             case sf::Event::MouseButtonReleased:
                 if (event.mouseButton.button != sf::Mouse::Left) continue;
                 ui.checkPieceClick(&window);
+                ui.checkPromotionClick(&window);
                 break;
             default:
                 break;

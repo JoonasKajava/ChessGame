@@ -99,6 +99,8 @@ void UserInterface::drawStatus(sf::RenderWindow* window)
 
 	window->draw(station->_blackJail);
 	window->draw(station->_whiteJail);
+
+	if (promoteBeforeMove) window->draw(_promotionSelect);
 }
 
 void UserInterface::checkPieceClick(sf::RenderWindow* window)
@@ -117,9 +119,25 @@ void UserInterface::checkPieceClick(sf::RenderWindow* window)
 	}
 }
 
+void UserInterface::checkPromotionClick(sf::RenderWindow* window)
+{
+	if (!promoteBeforeMove) return;
+	sf::Vector2i pos = sf::Mouse::getPosition(*window);
+	char selection = _promotionSelect.getSelection(sf::Vector2f(pos.x, pos.y));
+	if (selection > 0) {
+		promotionMove->promotion = selection;
+		station->movePiece(*promotionMove);
+		delete promotionMove;
+		promotionMove = nullptr;
+		promoteBeforeMove = false;
+	}
+	
+}
+
 void UserInterface::startDrag(sf::Vector2i pos)
 {
 	if (this->draggedPiece) return;
+	if (promoteBeforeMove) return;
 	Piece* piece = station->board[pos.y][pos.x];
 	if (!piece) return;
 	if (piece->getColor() != station->_isWhiteTurn) return;
@@ -142,7 +160,12 @@ void UserInterface::endDrag(sf::Vector2i pos)
 	if (!this->draggedPiece) return;
 	if (!this->legalMoves[pos.x][pos.y] && pos != this->dragStart) return;
 
-	station->movePiece(Move(this->dragStart, pos, this->draggedPiece->getColor()));
+	Move* move = new Move(this->dragStart, pos, this->draggedPiece->getColor());
+	if (this->draggedPiece->getCode() == PAWN && pos.y == 0) {
+		promotionMove = move;
+		promoteBeforeMove = true;
+	}
+	if(!promotionMove) station->movePiece(*move);
 
 	this->draggedPiece->setDragging(false);
 	this->draggedPiece = 0;
