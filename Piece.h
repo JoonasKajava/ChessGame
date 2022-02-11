@@ -1,4 +1,5 @@
 #pragma once
+
 #include "SFML/Graphics.hpp";
 #include <list>
 #include "Move.h"
@@ -19,7 +20,6 @@ protected:
 	sf::Texture _texture;
 	sf::Sprite _sprite;
 	bool _isDragging = false;
-	bool _hasBeenMoved = false;
 public:
 	
 	Piece(unsigned char code, bool isWhite);
@@ -34,6 +34,5 @@ public:
 	unsigned char getCode();
 	unsigned char getColor();
 	sf::Sprite& getSprite();
-	void setMoved(bool hasBeenMoved);
-	bool getHasBeenMoved();
+	bool getHasBeenMoved(Station* station);
 };

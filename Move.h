@@ -12,10 +12,11 @@ public:
 	sf::Vector2i start;
 	sf::Vector2i end;
 	bool isWhite;
+	bool enPassantMove = false;
 
 	bool operator==(const Move& other) const
 	{
-		return start == other.start && end == other.end && isWhite == other.isWhite && promotion == other.promotion;
+		return start == other.start && end == other.end && isWhite == other.isWhite && promotion == other.promotion && enPassantMove == other.enPassantMove;
 	}
 	char promotion;
 };

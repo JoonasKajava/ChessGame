@@ -1,7 +1,10 @@
 #pragma once
+
 #include "Piece.h"
 #include "Jail.h"
 #include "Move.h"
+
+class Pawn;
 
 class Station {
 public:
@@ -14,5 +17,11 @@ public:
 
 	void giveAllLegalMoves(std::list<Move>& list);
 
-	void movePiece(Move move, bool shouldEndTurn = true, bool dry = false);
+	Pawn *enPassantBuffer = 0;
+
+	std::list<Piece*> movedPieces;
+
+	void movePiece(Move move, bool shouldEndTurn = true);
+
+	double evaluate();
 };

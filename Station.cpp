@@ -67,7 +67,7 @@ void Station::giveAllLegalMoves(std::list<Move>& list)
 
 	while (it != list.end()) {
 		Station newStation = *this;
-		newStation.movePiece(*it, false, true);
+		newStation.movePiece(*it, false);
 		std::list<Move> enemyMovements;
 		for (int y = 0; y < 8; y++)
 		{
@@ -89,11 +89,19 @@ void Station::giveAllLegalMoves(std::list<Move>& list)
 }
 
 
-void Station::movePiece(Move move, bool shouldEndTurn, bool dry)
+void Station::movePiece(Move move, bool shouldEndTurn)
 {
 	if (move.start == move.end) return;
 
 	Piece* piece = board[move.start.y][move.start.x];
+
+	if (enPassantBuffer) {
+		enPassantBuffer = nullptr;
+	}
+
+	if (piece->getCode() == PAWN && abs(move.start.y - move.end.y) == 2) {
+		enPassantBuffer = (Pawn*)piece;
+	}
 
 	if (move.promotion > 0) {
 		delete piece;
@@ -121,10 +129,20 @@ void Station::movePiece(Move move, bool shouldEndTurn, bool dry)
 	if (captured) {
 		captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
 	}
+	if (move.enPassantMove) {
+		Piece* captured = board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x];
+		if (captured) {
+			captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
+		}
+		board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x] = 0;
+	}
 
 	board[move.end.y][move.end.x] = piece;
 	if (shouldEndTurn) _isWhiteTurn = !_isWhiteTurn;
-	if (!dry) piece->setMoved(true);
+
+	if (!piece->getHasBeenMoved(this)) {
+		movedPieces.push_back(piece);
+	}
 
 	// Do castle
 	if (piece->getCode() == KING && abs(move.start.x - move.end.x) > 1) {
@@ -135,4 +153,18 @@ void Station::movePiece(Move move, bool shouldEndTurn, bool dry)
 			movePiece(Move(sf::Vector2i(0, move.start.y), sf::Vector2i(3, move.start.y), piece->getColor()), false);
 		}
 	}
+}
+
+const double pieceValues[6] = {
+	5, // ROOK
+	3, // KNIGHT
+	3.25, // BISHOP
+	9, // QUEEN
+	99999, // KING
+	1 // PAWN
+};
+
+double Station::evaluate()
+{
+	return 0.0;
 }

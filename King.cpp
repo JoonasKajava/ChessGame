@@ -4,7 +4,7 @@
 
 bool King::canCastle(direction direction, Station* station)
 {
-    if (this->getHasBeenMoved()) return false;
+    if (this->getHasBeenMoved(station)) return false;
     bool toLeft = direction == Left;
 
     int y = this->getColor() ? 7 : 0;

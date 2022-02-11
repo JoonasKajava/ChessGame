@@ -57,12 +57,10 @@ sf::Sprite& Piece::getSprite()
 	return _sprite;
 }
 
-void Piece::setMoved(bool hasBeenMoved)
+bool Piece::getHasBeenMoved(Station* station)
 {
-	this->_hasBeenMoved = hasBeenMoved;
-}
-
-bool Piece::getHasBeenMoved()
-{
-	return _hasBeenMoved;
+	for (Piece* other : station->movedPieces) {
+		if (other == this) return true;
+	}
+	return false;
 }

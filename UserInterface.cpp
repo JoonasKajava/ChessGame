@@ -161,9 +161,16 @@ void UserInterface::endDrag(sf::Vector2i pos)
 	if (!this->legalMoves[pos.x][pos.y] && pos != this->dragStart) return;
 
 	Move* move = new Move(this->dragStart, pos, this->draggedPiece->getColor());
-	if (this->draggedPiece->getCode() == PAWN && pos.y == 0) {
-		promotionMove = move;
-		promoteBeforeMove = true;
+	if (this->draggedPiece->getCode() == PAWN) {
+		if (pos.y == 0) {
+			promotionMove = move;
+			promoteBeforeMove = true;
+		}
+		// Move is En Passant
+		if (abs(pos.x - dragStart.x) == 1 && !station->board[pos.y][pos.x]) {
+			move->enPassantMove = true;
+		}
+
 	}
 	if(!promotionMove) station->movePiece(*move);
 
