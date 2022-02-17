@@ -9,6 +9,7 @@ public:
 		this->isWhite = _isWhite;
 		this->promotion = -1;
 	}
+	Move() {};
 	sf::Vector2i start;
 	sf::Vector2i end;
 	bool isWhite;

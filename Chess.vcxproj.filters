@@ -95,6 +95,9 @@
     <ClInclude Include="PromotionSelect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MinMaxReturn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="Resources\arial.ttf">

@@ -3,12 +3,13 @@
 #include "Piece.h"
 #include "Jail.h"
 #include "Move.h"
+#include "MinMaxReturn.h"
 
 class Pawn;
 
 class Station {
 public:
-	Station();
+	Station(bool createPieces = false);
 	Piece *board[8][8];
 	bool _isWhiteTurn = true;
 
@@ -24,4 +25,8 @@ public:
 	void movePiece(Move move, bool shouldEndTurn = true);
 
 	double evaluate();
+
+	MinMaxReturn max(int depth, Station* station);
+
+	MinMaxReturn min(int depth, Station* station);
 };

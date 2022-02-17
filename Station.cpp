@@ -8,7 +8,7 @@
 #include "King.h"
 #include "Pawn.h"
 #include <algorithm>
-Station::Station()
+Station::Station(bool createPieces)
 {
 	for (int y = 0; y < 8; y++)
 	{
@@ -17,6 +17,7 @@ Station::Station()
 			board[y][x] = nullptr;
 		}
 	}
+	if (!createPieces) return;
 
 	board[0][0] = new Rook(Black);
 	board[0][1] = new Knight(Black);
@@ -123,7 +124,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 			break;
 		}
 	}
-	
+
 	board[move.start.y][move.start.x] = 0;
 	Piece* captured = board[move.end.y][move.end.x];
 	if (captured) {
@@ -160,11 +161,83 @@ const double pieceValues[6] = {
 	3, // KNIGHT
 	3.25, // BISHOP
 	9, // QUEEN
-	99999, // KING
+	0, // KING
 	1 // PAWN
 };
 
 double Station::evaluate()
 {
-	return 0.0;
+	double evaluation = 0;
+
+	for (char y = 0; y < 8; y++)
+		for (char x = 0; x < 8; x++)
+		{
+			Piece* piece = board[y][x];
+			if (!piece) continue;
+			evaluation += pieceValues[piece->getCode()] * (!piece->getCode() ? -1 : 1);
+		}
+
+	return evaluation;
+}
+
+MinMaxReturn Station::max(int depth, Station* station)
+{
+	MinMaxReturn max;
+
+	if (depth == 0) {
+		max.evaluationValue = -station->evaluate();
+		return max;
+	}
+
+	max.evaluationValue = -INFINITY;
+
+	std::list<Move> moves;
+
+	station->giveAllLegalMoves(moves);
+
+	Station newStation;
+
+	for (Move& move : moves) {
+		newStation = *station;
+		newStation.movePiece(move);
+
+		MinMaxReturn score = min(depth - 1, &newStation);
+		if (score.evaluationValue > max.evaluationValue) {
+			max.evaluationValue = score.evaluationValue;
+			max.bestMove = move;
+		}
+	}
+
+
+	return max;
+}
+
+MinMaxReturn Station::min(int depth, Station* station)
+{
+	MinMaxReturn min;
+
+	if (depth == 0) {
+		min.evaluationValue = station->evaluate();
+		return min;
+	}
+
+	min.evaluationValue = INFINITY;
+
+	std::list<Move> moves;
+
+	Station newStation;
+
+	station->giveAllLegalMoves(moves);
+
+	for (Move& move : moves) {
+		newStation = *station;
+		newStation.movePiece(move);
+		MinMaxReturn score = max(depth - 1, &newStation);
+		if (score.evaluationValue < min.evaluationValue) {
+			min.evaluationValue = score.evaluationValue;
+			min.bestMove = move;
+		}
+	}
+
+	return min;
 }

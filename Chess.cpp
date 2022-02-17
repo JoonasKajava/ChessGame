@@ -1,14 +1,38 @@
 #include <SFML/Graphics.hpp>
 #include "UserInterface.h"
+#include <chrono>
+#include <iostream>
+
+using std::chrono::high_resolution_clock;
+using std::chrono::duration_cast;
+using std::chrono::duration;
+using std::chrono::seconds;
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1220, 900), "Nimi :D", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
-    Station station;
+    Station station(true);
     UserInterface ui(&station);
 
     while (window.isOpen())
     {
+        if (!station._isWhiteTurn) {
+            auto t1 = high_resolution_clock::now();
+
+            MinMaxReturn test = station.min(3, &station);
+            station.movePiece(test.bestMove);
+
+            auto t2 = high_resolution_clock::now();
+
+            auto secs = duration_cast<seconds>(t2 - t1);
+
+
+            std::cout << "Bot move took: " << secs.count() << "s\n";
+
+            continue;
+        }
+
         sf::Event event;
         while (window.pollEvent(event))
         {

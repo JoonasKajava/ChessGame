@@ -27,12 +27,6 @@ void UserInterface::drawBoard(sf::RenderWindow* window)
 	text.setCharacterSize(64);
 	text.setFillColor(sf::Color::Black);
 
-	bool AllLegal[8][8] = { false };
-	std::list<Move> test;
-	station->giveAllLegalMoves(test);
-	for (const Move& move : test) {
-		AllLegal[move.end.x][move.end.y] = true;
-	}
 	for (int y = 0; y < 8; y++)
 	{
 		text.setString(std::to_string(8 - y));
@@ -49,9 +43,6 @@ void UserInterface::drawBoard(sf::RenderWindow* window)
 			}
 			else {
 				square.setFillColor((x + y) % 2 == 0 ? sf::Color(181, 136, 99) : sf::Color(239, 216, 180));
-				if (AllLegal[x][y]) {
-					square.setFillColor(sf::Color::Blue);
-				}
 			}
 
 			square.setOutlineColor(sf::Color::Black);
