@@ -8,6 +8,7 @@
 #include "King.h"
 #include "Pawn.h"
 #include <algorithm>
+#include <iostream>
 Station::Station(bool createPieces)
 {
 	for (int y = 0; y < 8; y++)
@@ -50,8 +51,6 @@ Station::Station(bool createPieces)
 
 void Station::giveAllLegalMoves(std::list<Move>& list)
 {
-	sf::Vector2i King;
-
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
@@ -59,7 +58,6 @@ void Station::giveAllLegalMoves(std::list<Move>& list)
 			Piece* piece = board[y][x];
 			if (!piece) continue;
 			if (piece->getColor() != _isWhiteTurn) continue;
-			if (piece->getCode() == KING) King = sf::Vector2i(x, y);
 			piece->giveMovements(list, sf::Vector2i(x, y), this);
 		}
 	}
@@ -80,11 +78,7 @@ void Station::giveAllLegalMoves(std::list<Move>& list)
 				piece->giveMovements(enemyMovements, sf::Vector2i(x, y), &newStation);
 			}
 		}
-		for (Move& enemyMove : enemyMovements) {
-			if (enemyMove.end == King) {
-				it = list.erase(it);
-			}
-		}
+		if(newStation.isKingInDanger) it = list.erase(it);
 		it++;
 	}
 }
@@ -95,6 +89,10 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	if (move.start == move.end) return;
 
 	Piece* piece = board[move.start.y][move.start.x];
+	if (!piece) {
+		std::cout << "Tried to move piece that was not found";
+		return;
+	}
 
 	if (enPassantBuffer) {
 		enPassantBuffer = nullptr;
@@ -139,7 +137,6 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	}
 
 	board[move.end.y][move.end.x] = piece;
-	if (shouldEndTurn) _isWhiteTurn = !_isWhiteTurn;
 
 	if (!piece->getHasBeenMoved(this)) {
 		movedPieces.push_back(piece);
@@ -153,6 +150,10 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		else {
 			movePiece(Move(sf::Vector2i(0, move.start.y), sf::Vector2i(3, move.start.y), piece->getColor()), false);
 		}
+	}
+	if (shouldEndTurn) {
+		setIsKingInDanger();
+		_isWhiteTurn = !_isWhiteTurn;
 	}
 }
 
@@ -174,26 +175,39 @@ double Station::evaluate()
 		{
 			Piece* piece = board[y][x];
 			if (!piece) continue;
-			evaluation += pieceValues[piece->getCode()] * (!piece->getCode() ? -1 : 1);
+			std::list<Move> moves;
+			piece->giveMovements(moves, sf::Vector2i(x, y), this);
+
+			double movementFreedomBonus = 0;
+			if (piece->getCode() != PAWN) {
+				movementFreedomBonus = moves.size() * 0.5;
+			}
+
+			
+			evaluation += (pieceValues[piece->getCode()] + movementFreedomBonus) * (!piece->getCode() ? -1 : 1);
 		}
 
 	return evaluation;
 }
 
-MinMaxReturn Station::max(int depth, Station* station)
+MinMaxReturn Station::miniMax(int depth, Station* station)
 {
-	MinMaxReturn max;
-
-	if (depth == 0) {
-		max.evaluationValue = -station->evaluate();
-		return max;
-	}
-
-	max.evaluationValue = -INFINITY;
+	MinMaxReturn minMax;
 
 	std::list<Move> moves;
 
 	station->giveAllLegalMoves(moves);
+
+	double modifier = station->_isWhiteTurn ? 1 : -1;
+
+
+	if (depth == 0) {
+		minMax.evaluationValue = station->evaluate() * modifier;
+		return minMax;
+	}
+
+	minMax.evaluationValue = INFINITY * modifier;
+
 
 	Station newStation;
 
@@ -201,43 +215,41 @@ MinMaxReturn Station::max(int depth, Station* station)
 		newStation = *station;
 		newStation.movePiece(move);
 
-		MinMaxReturn score = min(depth - 1, &newStation);
-		if (score.evaluationValue > max.evaluationValue) {
-			max.evaluationValue = score.evaluationValue;
-			max.bestMove = move;
+		MinMaxReturn score = miniMax(depth - 1, &newStation);
+		if ((score.evaluationValue > minMax.evaluationValue && !station->_isWhiteTurn) || (score.evaluationValue < minMax.evaluationValue && station->_isWhiteTurn)) {
+			minMax.evaluationValue = score.evaluationValue;
+			minMax.bestMove = move;
 		}
 	}
 
 
-	return max;
+	return minMax;
 }
 
-MinMaxReturn Station::min(int depth, Station* station)
+bool Station::setIsKingInDanger()
 {
-	MinMaxReturn min;
+	sf::Vector2i King;
 
-	if (depth == 0) {
-		min.evaluationValue = station->evaluate();
-		return min;
+	std::list<Move> enemyMovements;
+	for (int y = 0; y < 8; y++)
+	{
+		for (int x = 0; x < 8; x++)
+		{
+			Piece* piece = board[y][x];
+			if (!piece) continue;
+			if (piece->getColor() == _isWhiteTurn) {
+				if (piece->getCode() == KING) King = sf::Vector2i(x, y);
+				continue;
+			}
+			piece->giveMovements(enemyMovements, sf::Vector2i(x, y), this);
+		}
 	}
-
-	min.evaluationValue = INFINITY;
-
-	std::list<Move> moves;
-
-	Station newStation;
-
-	station->giveAllLegalMoves(moves);
-
-	for (Move& move : moves) {
-		newStation = *station;
-		newStation.movePiece(move);
-		MinMaxReturn score = max(depth - 1, &newStation);
-		if (score.evaluationValue < min.evaluationValue) {
-			min.evaluationValue = score.evaluationValue;
-			min.bestMove = move;
+	for (Move& enemyMove : enemyMovements) {
+		if (enemyMove.end == King) {
+			return true;
 		}
 	}
 
-	return min;
+	return false;
 }
+

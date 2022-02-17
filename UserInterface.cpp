@@ -137,10 +137,13 @@ void UserInterface::startDrag(sf::Vector2i pos)
 	this->dragStart = pos;
 
 	std::list<Move> moves;
+	std::list<Move> AllLegalMoves;
+	station->giveAllLegalMoves(AllLegalMoves);
 	if (this->draggedPiece) {
-		this->draggedPiece->giveMovements(moves, pos, station);
-		for (const Move& move : moves) {
-			this->legalMoves[move.end.x][move.end.y] = true;
+		for (const Move& move : AllLegalMoves) {
+			if (move.start == pos) {
+				this->legalMoves[move.end.x][move.end.y] = true;
+			}
 		}
 	}
 

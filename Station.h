@@ -12,6 +12,7 @@ public:
 	Station(bool createPieces = false);
 	Piece *board[8][8];
 	bool _isWhiteTurn = true;
+	bool isKingInDanger = false;
 
 	Jail _whiteJail = Jail(sf::Vector2f(910, 510), sf::Vector2f(300, 300));
 	Jail _blackJail = Jail(sf::Vector2f(910, 10), sf::Vector2f(300, 300));
@@ -26,7 +27,7 @@ public:
 
 	double evaluate();
 
-	MinMaxReturn max(int depth, Station* station);
+	MinMaxReturn miniMax(int depth, Station* station);
 
-	MinMaxReturn min(int depth, Station* station);
+	bool setIsKingInDanger();
 };

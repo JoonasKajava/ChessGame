@@ -1,7 +1,8 @@
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "UserInterface.h"
 #include <chrono>
-#include <iostream>
+
 
 using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;
@@ -20,8 +21,8 @@ int main()
         if (!station._isWhiteTurn) {
             auto t1 = high_resolution_clock::now();
 
-            MinMaxReturn test = station.min(3, &station);
-            station.movePiece(test.bestMove);
+            MinMaxReturn botMovement = station.miniMax(2, &station);
+            station.movePiece(botMovement.bestMove);
 
             auto t2 = high_resolution_clock::now();
 
