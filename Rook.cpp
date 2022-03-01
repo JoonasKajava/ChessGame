@@ -1,7 +1,7 @@
 #pragma once
 #include "Rook.h"
 
-void Rook::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station)
+void Rook::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station)
 {
 	for (char i = 0; i < 4; i++)
 	{

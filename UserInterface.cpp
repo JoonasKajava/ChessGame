@@ -2,7 +2,7 @@
 #include "UserInterface.h"
 #include <string>
 #include <math.h>
-#include <list>
+#include <vector>
 #include <set>
 #include <algorithm>
 
@@ -136,8 +136,8 @@ void UserInterface::startDrag(sf::Vector2i pos)
 	this->draggedPiece = piece;
 	this->dragStart = pos;
 
-	std::list<Move> moves;
-	std::list<Move> AllLegalMoves;
+	std::vector<Move> moves;
+	std::vector<Move> AllLegalMoves;
 	station->giveAllLegalMoves(AllLegalMoves);
 	if (this->draggedPiece) {
 		for (const Move& move : AllLegalMoves) {

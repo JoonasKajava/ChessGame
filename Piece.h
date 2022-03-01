@@ -1,8 +1,9 @@
 #pragma once
 
 #include "SFML/Graphics.hpp";
-#include <list>
+#include <vector>
 #include "Move.h"
+
 
 class Station;
 
@@ -25,7 +26,7 @@ public:
 	Piece(unsigned char code, bool isWhite);
 	Piece(Piece& other);
 	Piece() {};
-	virtual void giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station) = 0;
+	virtual void giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station) = 0;
 	bool isValidPosition(sf::Vector2i pos, Station* station, bool& shouldStop);
 	bool isValidPosition(sf::Vector2i pos, Station* station);
 	void setDragging(bool state);

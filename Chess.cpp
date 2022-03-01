@@ -16,23 +16,31 @@ int main()
     Station station(true);
     UserInterface ui(&station);
 
+    
+
     while (window.isOpen())
     {
-        if (!station._isWhiteTurn) {
+        if (
+            //!station._isWhiteTurn && 
+            !station.gameOver) {
+
+            std::vector<Move> moves;
+            station.giveAllLegalMoves(moves);
+            std::cout << "Bot had " << moves.size() << " legal moves\n";
+
             auto t1 = high_resolution_clock::now();
 
-            MinMaxReturn botMovement = station.miniMax(2, &station);
+            MinMaxReturn botMovement = station.miniMax(3, &station);
             station.movePiece(botMovement.bestMove);
 
             auto t2 = high_resolution_clock::now();
 
             auto secs = duration_cast<seconds>(t2 - t1);
 
+            std::cout << "Bot move took: " << secs.count() << "s\n\n";
 
-            std::cout << "Bot move took: " << secs.count() << "s\n";
-
-            continue;
         }
+
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -43,7 +51,8 @@ int main()
                 window.close();
                 break;
             case sf::Event::MouseButtonReleased:
-                if (event.mouseButton.button != sf::Mouse::Left) continue;
+                
+                if (event.mouseButton.button != sf::Mouse::Left || station.gameOver) continue;
                 ui.checkPieceClick(&window);
                 ui.checkPromotionClick(&window);
                 break;

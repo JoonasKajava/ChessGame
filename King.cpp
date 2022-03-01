@@ -20,7 +20,7 @@ bool King::canCastle(direction direction, Station* station)
 	return true;
 }
 
-void King::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station) {
+void King::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station) {
 
     for (char y = -1; y <= 1; y++)
     {

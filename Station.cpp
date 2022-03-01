@@ -11,6 +11,7 @@
 #include <iostream>
 Station::Station(bool createPieces)
 {
+	_isMainStation = createPieces;
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
@@ -49,8 +50,9 @@ Station::Station(bool createPieces)
 	board[7][7] = new Rook(White);
 }
 
-void Station::giveAllLegalMoves(std::list<Move>& list)
+void Station::giveAllLegalMoves(std::vector<Move>& list)
 {
+	std::vector<Move> tempMoves;
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
@@ -58,28 +60,17 @@ void Station::giveAllLegalMoves(std::list<Move>& list)
 			Piece* piece = board[y][x];
 			if (!piece) continue;
 			if (piece->getColor() != _isWhiteTurn) continue;
-			piece->giveMovements(list, sf::Vector2i(x, y), this);
+			piece->giveMovements(tempMoves, sf::Vector2i(x, y), this);
 		}
 	}
 
-	std::list<Move>::iterator it = list.begin();
-
-	while (it != list.end()) {
+	for (Move& move : tempMoves) {
 		Station newStation = *this;
-		newStation.movePiece(*it, false);
-		std::list<Move> enemyMovements;
-		for (int y = 0; y < 8; y++)
-		{
-			for (int x = 0; x < 8; x++)
-			{
-				Piece* piece = newStation.board[y][x];
-				if (!piece) continue;
-				if (piece->getColor() == _isWhiteTurn) continue;
-				piece->giveMovements(enemyMovements, sf::Vector2i(x, y), &newStation);
-			}
+		newStation._isMainStation = false;
+		newStation.movePiece(move, true);
+		if (!newStation.getIsKingInDanger()) {
+			list.push_back(move);
 		}
-		if(newStation.isKingInDanger) it = list.erase(it);
-		it++;
 	}
 }
 
@@ -90,7 +81,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 
 	Piece* piece = board[move.start.y][move.start.x];
 	if (!piece) {
-		std::cout << "Tried to move piece that was not found";
+		std::cout << "\nTried to move piece that was not found (" << (std::string)(move) << ")\n" ;
 		return;
 	}
 
@@ -152,8 +143,17 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		}
 	}
 	if (shouldEndTurn) {
-		setIsKingInDanger();
+		_isKingInDanger = setIsKingInDanger();
 		_isWhiteTurn = !_isWhiteTurn;
+		if (!_isMainStation) return;
+
+		std::vector<Move> moves;
+		this->giveAllLegalMoves(moves);
+		if (moves.size() == 0) {
+			gameOver = true;
+			std::cout << (_isKingInDanger ? "Win!" : "Draw!");
+		}
+
 	}
 }
 
@@ -175,7 +175,7 @@ double Station::evaluate()
 		{
 			Piece* piece = board[y][x];
 			if (!piece) continue;
-			std::list<Move> moves;
+			std::vector<Move> moves;
 			piece->giveMovements(moves, sf::Vector2i(x, y), this);
 
 			double movementFreedomBonus = 0;
@@ -194,11 +194,25 @@ MinMaxReturn Station::miniMax(int depth, Station* station)
 {
 	MinMaxReturn minMax;
 
-	std::list<Move> moves;
+	std::vector<Move> moves;
 
 	station->giveAllLegalMoves(moves);
 
 	double modifier = station->_isWhiteTurn ? 1 : -1;
+
+
+	if (moves.size() == 0) {
+
+		// Matti
+		if (station->getIsKingInDanger()) {
+			minMax.evaluationValue = INFINITY * -modifier;
+		}
+		else {
+			minMax.evaluationValue = 0;
+		}
+		return minMax;
+	}
+
 
 
 	if (depth == 0) {
@@ -213,6 +227,7 @@ MinMaxReturn Station::miniMax(int depth, Station* station)
 
 	for (Move& move : moves) {
 		newStation = *station;
+		newStation._isMainStation = false;
 		newStation.movePiece(move);
 
 		MinMaxReturn score = miniMax(depth - 1, &newStation);
@@ -230,7 +245,7 @@ bool Station::setIsKingInDanger()
 {
 	sf::Vector2i King;
 
-	std::list<Move> enemyMovements;
+	std::vector<Move> enemyMovements;
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
@@ -251,5 +266,10 @@ bool Station::setIsKingInDanger()
 	}
 
 	return false;
+}
+
+bool Station::getIsKingInDanger()
+{
+	return _isKingInDanger;
 }
 

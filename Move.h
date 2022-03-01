@@ -20,4 +20,8 @@ public:
 		return start == other.start && end == other.end && isWhite == other.isWhite && promotion == other.promotion && enPassantMove == other.enPassantMove;
 	}
 	char promotion;
+
+	operator std::string() const {
+		return static_cast<char>(97 + start.x) + std::to_string(8-start.y) + "-" + static_cast<char>(97 + end.x) + std::to_string(8 - end.y);
+	}
 };

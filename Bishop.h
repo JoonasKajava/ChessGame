@@ -5,5 +5,5 @@
 class Bishop : public Piece {
 public:
 	Bishop(bool isWhite) : Piece(BISHOP, isWhite) {};
-	void giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station);
+	void giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station);
 };

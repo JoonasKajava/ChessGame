@@ -5,6 +5,6 @@
 class Pawn : public Piece {
 public:
 	Pawn(bool isWhite) : Piece(PAWN, isWhite) {};
-	void giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station);
-	void givePromotionMovements(std::list<Move>& moves, Move* move, Station* station);
+	void giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station);
+	void givePromotionMovements(std::vector<Move>& moves, Move* move, Station* station);
 };

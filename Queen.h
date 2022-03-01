@@ -8,5 +8,5 @@
 class Queen : public Rook, public Bishop, public King, public Piece {
 public:
 	Queen(bool isWhite) : Rook(isWhite), Bishop(isWhite), King(isWhite), Piece(QUEEN, isWhite) {};
-	void giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station);
+	void giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station);
 };

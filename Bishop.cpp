@@ -1,7 +1,7 @@
 #pragma once
 #include "Bishop.h"
 
-void Bishop::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station)
+void Bishop::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station)
 {
 	
 	for (char i = 0; i < 4; i++)

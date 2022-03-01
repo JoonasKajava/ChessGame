@@ -8,20 +8,24 @@
 class Pawn;
 
 class Station {
+	bool _isKingInDanger = false;
+
 public:
+	bool _isMainStation = false;
 	Station(bool createPieces = false);
 	Piece *board[8][8];
 	bool _isWhiteTurn = true;
-	bool isKingInDanger = false;
+	bool gameOver = false;
+
 
 	Jail _whiteJail = Jail(sf::Vector2f(910, 510), sf::Vector2f(300, 300));
 	Jail _blackJail = Jail(sf::Vector2f(910, 10), sf::Vector2f(300, 300));
 
-	void giveAllLegalMoves(std::list<Move>& list);
+	void giveAllLegalMoves(std::vector<Move>& list);
 
 	Pawn *enPassantBuffer = 0;
 
-	std::list<Piece*> movedPieces;
+	std::vector<Piece*> movedPieces;
 
 	void movePiece(Move move, bool shouldEndTurn = true);
 
@@ -30,4 +34,5 @@ public:
 	MinMaxReturn miniMax(int depth, Station* station);
 
 	bool setIsKingInDanger();
+	bool getIsKingInDanger();
 };

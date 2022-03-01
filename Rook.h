@@ -5,5 +5,5 @@
 class Rook : public Piece {
 public:
 	Rook(bool isWhite) : Piece(ROOK, isWhite) {};
-	void giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station);
+	void giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station);
 };

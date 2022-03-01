@@ -1,7 +1,7 @@
 #pragma once
 #include "Knight.h"
 
-void Knight::giveMovements(std::list<Move>& moves, sf::Vector2i start, Station* station)
+void Knight::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station)
 {
 	sf::Vector2i positions[]{
 	sf::Vector2i(start.x + 1, start.y + 2),
