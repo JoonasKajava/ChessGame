@@ -1,13 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "UserInterface.h"
-#include <chrono>
-
-
-using std::chrono::high_resolution_clock;
-using std::chrono::duration_cast;
-using std::chrono::duration;
-using std::chrono::seconds;
 
 int main()
 {
@@ -28,16 +21,14 @@ int main()
             station.giveAllLegalMoves(moves);
             std::cout << "Bot had " << moves.size() << " legal moves\n";
 
-            auto t1 = high_resolution_clock::now();
+            sf::Clock clock;
 
             MinMaxReturn botMovement = station.miniMax(3, &station);
             station.movePiece(botMovement.bestMove);
 
-            auto t2 = high_resolution_clock::now();
+            sf::Time elapsed = clock.getElapsedTime();
 
-            auto secs = duration_cast<seconds>(t2 - t1);
-
-            std::cout << "Bot move took: " << secs.count() << "s\n\n";
+            std::cout << "Bot move took: " << elapsed.asSeconds() << "s\n\n";
 
         }
 

@@ -9,15 +9,15 @@ bool King::canCastle(direction direction, Station* station)
 
     int y = this->getColor() ? 7 : 0;
     int index = 4;
-    Piece* adPiece = 0;
+    Piece* adPiece = nullptr;
     do {
         toLeft ? index-- : index++;
 
         adPiece = station->board[y][index];
-    } while (adPiece == 0 && index > 0 && index < 8);
-    if (adPiece == 0 || adPiece->getCode() != ROOK || adPiece->getColor() != this->getColor()) return false;
-    
-	return true;
+    } while (adPiece == 0 && index > 1 && index < 7);
+
+
+    return adPiece != nullptr && adPiece->getCode() == ROOK && !adPiece->getHasBeenMoved(station);
 }
 
 void King::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* station) {

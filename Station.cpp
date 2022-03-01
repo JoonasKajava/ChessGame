@@ -94,7 +94,8 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	}
 
 	if (move.promotion > 0) {
-		delete piece;
+
+		// TODO: Causes memory leak with the new clause
 		switch (move.promotion)
 		{
 		case QUEEN:
@@ -114,7 +115,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		}
 	}
 
-	board[move.start.y][move.start.x] = 0;
+	board[move.start.y][move.start.x] = nullptr;
 	Piece* captured = board[move.end.y][move.end.x];
 	if (captured) {
 		captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
@@ -124,7 +125,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		if (captured) {
 			captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
 		}
-		board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x] = 0;
+		board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x] = nullptr;
 	}
 
 	board[move.end.y][move.end.x] = piece;
@@ -170,6 +171,9 @@ double Station::evaluate()
 {
 	double evaluation = 0;
 
+	double white = 0;
+	double black = 0;
+
 	for (char y = 0; y < 8; y++)
 		for (char x = 0; x < 8; x++)
 		{
@@ -180,14 +184,25 @@ double Station::evaluate()
 
 			double movementFreedomBonus = 0;
 			if (piece->getCode() != PAWN) {
+				// Pieces get bonus evaluation based on their freedom to move
 				movementFreedomBonus = moves.size() * 0.5;
 			}
+			else {
+				// Reward pawns for moving forward
+				movementFreedomBonus = (piece->getColor() ? 8 - y : y);
+			}
+			double value = (pieceValues[piece->getCode()] + movementFreedomBonus);
 
+			if (piece->getColor()) {
+				white = value;
+			}
+			else {
+				black = value;
+			}
 			
-			evaluation += (pieceValues[piece->getCode()] + movementFreedomBonus) * (!piece->getCode() ? -1 : 1);
 		}
 
-	return evaluation;
+	return _isWhiteTurn ? black-white : white-black;
 }
 
 MinMaxReturn Station::miniMax(int depth, Station* station)
@@ -216,7 +231,7 @@ MinMaxReturn Station::miniMax(int depth, Station* station)
 
 
 	if (depth == 0) {
-		minMax.evaluationValue = station->evaluate() * modifier;
+		minMax.evaluationValue = station->evaluate();
 		return minMax;
 	}
 
