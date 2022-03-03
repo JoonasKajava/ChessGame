@@ -4,7 +4,8 @@
 
 class MinMaxReturn {
 public:
-	MinMaxReturn() {};
+	MinMaxReturn() : evaluationValue(0) {};
+	MinMaxReturn(double value) : evaluationValue(value) {};
 	double evaluationValue;
 	Move bestMove;
 };

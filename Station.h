@@ -31,7 +31,7 @@ public:
 
 	double evaluate();
 
-	MinMaxReturn miniMax(int depth, Station* station);
+	MinMaxReturn miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station);
 
 	bool setIsKingInDanger();
 	bool getIsKingInDanger();

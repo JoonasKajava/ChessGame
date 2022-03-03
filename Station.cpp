@@ -159,12 +159,12 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 }
 
 const double pieceValues[6] = {
-	5, // ROOK
-	3, // KNIGHT
-	3.25, // BISHOP
-	9, // QUEEN
-	0, // KING
-	1 // PAWN
+	500, // ROOK
+	320, // KNIGHT
+	330, // BISHOP
+	900, // QUEEN
+	20000, // KING
+	100 // PAWN
 };
 
 double Station::evaluate()
@@ -202,12 +202,16 @@ double Station::evaluate()
 			
 		}
 
-	return _isWhiteTurn ? black-white : white-black;
+	return white-black;
 }
 
-MinMaxReturn Station::miniMax(int depth, Station* station)
+int minimaxCounter = 0;
+
+MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station)
 {
+	minimaxCounter++;
 	MinMaxReturn minMax;
+	bool isMax = station->_isWhiteTurn;
 
 	std::vector<Move> moves;
 
@@ -235,7 +239,6 @@ MinMaxReturn Station::miniMax(int depth, Station* station)
 		return minMax;
 	}
 
-	minMax.evaluationValue = INFINITY * modifier;
 
 
 	Station newStation;
@@ -245,15 +248,24 @@ MinMaxReturn Station::miniMax(int depth, Station* station)
 		newStation._isMainStation = false;
 		newStation.movePiece(move);
 
-		MinMaxReturn score = miniMax(depth - 1, &newStation);
-		if ((score.evaluationValue > minMax.evaluationValue && !station->_isWhiteTurn) || (score.evaluationValue < minMax.evaluationValue && station->_isWhiteTurn)) {
-			minMax.evaluationValue = score.evaluationValue;
-			minMax.bestMove = move;
+		MinMaxReturn score = miniMax(alpha, beta, depth - 1, &newStation);
+		score.bestMove = move;
+
+
+		if (isMax) {
+			if (score.evaluationValue >= beta.evaluationValue) 
+				return beta;
+			if (score.evaluationValue > alpha.evaluationValue) alpha = score;
+		}
+		else {
+			if (score.evaluationValue <= alpha.evaluationValue)
+				return alpha;
+			if (score.evaluationValue < beta.evaluationValue) beta = score;
 		}
 	}
 
 
-	return minMax;
+	return isMax ? alpha : beta;
 }
 
 bool Station::setIsKingInDanger()

@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "UserInterface.h"
 
+extern int minimaxCounter;
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1220, 900), "Nimi :D", sf::Style::Titlebar | sf::Style::Close);
@@ -22,13 +24,13 @@ int main()
             std::cout << "Bot had " << moves.size() << " legal moves\n";
 
             sf::Clock clock;
-
-            MinMaxReturn botMovement = station.miniMax(3, &station);
+            minimaxCounter = 0;
+            MinMaxReturn botMovement = station.miniMax(MinMaxReturn(-INFINITY), MinMaxReturn(INFINITY), 4, &station);
             station.movePiece(botMovement.bestMove);
 
             sf::Time elapsed = clock.getElapsedTime();
 
-            std::cout << "Bot move took: " << elapsed.asSeconds() << "s\n\n";
+            std::cout << "Bot move took: " << elapsed.asSeconds() << "s and called minimax " << minimaxCounter <<  " times\n\n";
 
         }
 
