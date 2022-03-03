@@ -64,7 +64,7 @@ void UserInterface::drawBoard(sf::RenderWindow* window)
 
 	for (int i = 0; i < 8; i++)
 	{
-		text.setString(static_cast<char>(97 + i));
+		text.setString(static_cast<char>(65 + i));
 		text.setPosition(sf::Vector2f(100 * i + (50 - (text.getGlobalBounds().width / 2.0f)) + 100, 800));
 		window->draw(text);
 	}

@@ -14,7 +14,7 @@ bool King::canCastle(direction direction, Station* station)
         toLeft ? index-- : index++;
 
         adPiece = station->board[y][index];
-    } while (adPiece == 0 && index > 1 && index < 7);
+    } while (adPiece == 0 && index > 0 && index < 7);
 
 
     return adPiece != nullptr && adPiece->getCode() == ROOK && !adPiece->getHasBeenMoved(station);

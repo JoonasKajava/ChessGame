@@ -185,11 +185,11 @@ double Station::evaluate()
 			double movementFreedomBonus = 0;
 			if (piece->getCode() != PAWN) {
 				// Pieces get bonus evaluation based on their freedom to move
-				movementFreedomBonus = moves.size() * 0.5;
+				movementFreedomBonus = moves.size() * 0.01f;
 			}
 			else {
 				// Reward pawns for moving forward
-				movementFreedomBonus = (piece->getColor() ? 8 - y : y);
+				movementFreedomBonus = (piece->getColor() ? 8 - y : y) * 0.5f;
 			}
 			double value = (pieceValues[piece->getCode()] + movementFreedomBonus);
 

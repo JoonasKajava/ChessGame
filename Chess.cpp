@@ -14,7 +14,7 @@ int main()
     while (window.isOpen())
     {
         if (
-            //!station._isWhiteTurn && 
+            !station._isWhiteTurn && 
             !station.gameOver) {
 
             std::vector<Move> moves;
