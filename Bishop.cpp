@@ -8,7 +8,7 @@ void Bishop::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station
 	{
 		int counter = 1;
 		sf::Vector2i pos(sf::Vector2i(start.x + (i%2==0 ? counter : -counter), start.y + (i < 2 ? counter : -counter)));
-		Piece* slotPiece = station->board[pos.y][pos.x];
+		Piece* slotPiece = station->board[pos.y][pos.x].get();
 		bool shouldStop = false;
 		while (isValidPosition(pos, station, shouldStop)) {
 			moves.push_back(Move(start, pos, getColor()));
@@ -17,7 +17,7 @@ void Bishop::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station
 			}
 			counter++;
 			pos = sf::Vector2i(sf::Vector2i(start.x + (i % 2 == 0 ? counter : -counter), start.y + (i < 2 ? counter : -counter)));
-			slotPiece = station->board[pos.y][pos.x];
+			slotPiece = station->board[pos.y][pos.x].get();
 
 		}; 
 	}

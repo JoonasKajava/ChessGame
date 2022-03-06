@@ -21,33 +21,33 @@ Station::Station(bool createPieces)
 	}
 	if (!createPieces) return;
 
-	board[0][0] = new Rook(Black);
-	board[0][1] = new Knight(Black);
-	board[0][2] = new Bishop(Black);
-	board[0][3] = new Queen(Black);
-	board[0][4] = new King(Black);
-	board[0][5] = new Bishop(Black);
-	board[0][6] = new Knight(Black);
-	board[0][7] = new Rook(Black);
+	board[0][0] = std::make_shared<Rook>(Black);
+	board[0][1] = std::make_shared<Knight>(Black);
+	board[0][2] = std::make_shared<Bishop>(Black);
+	board[0][3] = std::make_shared<Queen>(Black);
+	board[0][4] = std::make_shared<King>(Black);
+	board[0][5] = std::make_shared<Bishop>(Black);
+	board[0][6] = std::make_shared<Knight>(Black);
+	board[0][7] = std::make_shared<Rook>(Black);
 
 
 	for (int i = 0; i < 8; i++)
 	{
-		board[1][i] = new Pawn(Black);
-		board[6][i] = new Pawn(White);
+		board[1][i] = std::make_shared<Pawn>(Black);
+		board[6][i] = std::make_shared<Pawn>(White);
 	}
 
 
 
 
-	board[7][0] = new Rook(White);
-	board[7][1] = new Knight(White);
-	board[7][2] = new Bishop(White);
-	board[7][3] = new Queen(White);
-	board[7][4] = new King(White);
-	board[7][5] = new Bishop(White);
-	board[7][6] = new Knight(White);
-	board[7][7] = new Rook(White);
+	board[7][0] = std::make_shared < Rook>(White);
+	board[7][1] = std::make_shared < Knight>(White);
+	board[7][2] = std::make_shared < Bishop>(White);
+	board[7][3] = std::make_shared < Queen>(White);
+	board[7][4] = std::make_shared < King>(White);
+	board[7][5] = std::make_shared < Bishop>(White);
+	board[7][6] = std::make_shared < Knight>(White);
+	board[7][7] = std::make_shared < Rook>(White);
 }
 
 void Station::giveAllLegalMoves(std::vector<Move>& list)
@@ -57,7 +57,7 @@ void Station::giveAllLegalMoves(std::vector<Move>& list)
 	{
 		for (int x = 0; x < 8; x++)
 		{
-			Piece* piece = board[y][x];
+			Piece* piece = board[y][x].get();
 			if (!piece) continue;
 			if (piece->getColor() != _isWhiteTurn) continue;
 			piece->giveMovements(tempMoves, sf::Vector2i(x, y), this);
@@ -79,7 +79,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 {
 	if (move.start == move.end) return;
 
-	Piece* piece = board[move.start.y][move.start.x];
+	std::shared_ptr<Piece> piece = board[move.start.y][move.start.x];
 	if (!piece) {
 		std::cout << "\nTried to move piece that was not found (" << (std::string)(move) << ")\n";
 		return;
@@ -90,7 +90,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	}
 
 	if (piece->getCode() == PAWN && abs(move.start.y - move.end.y) == 2) {
-		enPassantBuffer = (Pawn*)piece;
+		enPassantBuffer = (Pawn*)piece.get();
 	}
 
 	if (move.promotion > 0) {
@@ -99,16 +99,16 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		switch (move.promotion)
 		{
 		case QUEEN:
-			piece = new Queen(move.isWhite);
+			piece.reset(new Queen(move.isWhite));
 			break;
 		case ROOK:
-			piece = new Rook(move.isWhite);
+			piece.reset(new Rook(move.isWhite));
 			break;
 		case BISHOP:
-			piece = new Bishop(move.isWhite);
+			piece.reset(new Bishop(move.isWhite));
 			break;
 		case KNIGHT:
-			piece = new Knight(move.isWhite);
+			piece.reset(new Knight(move.isWhite));
 			break;
 		default:
 			break;
@@ -116,12 +116,12 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	}
 
 	board[move.start.y][move.start.x] = nullptr;
-	Piece* captured = board[move.end.y][move.end.x];
+	Piece* captured = board[move.end.y][move.end.x].get();
 	if (captured) {
 		captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
 	}
 	if (move.enPassantMove) {
-		Piece* captured = board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x];
+		Piece* captured = board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x].get();
 		if (captured) {
 			captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
 		}
@@ -131,7 +131,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	board[move.end.y][move.end.x] = piece;
 
 	if (!piece->getHasBeenMoved(this)) {
-		movedPieces.push_back(piece);
+		movedPieces.push_back(piece.get());
 	}
 
 	// Do castle
@@ -253,7 +253,7 @@ double Station::evaluate()
 	for (char y = 0; y < 8; y++)
 		for (char x = 0; x < 8; x++)
 		{
-			Piece* piece = board[y][x];
+			Piece* piece = board[y][x].get();
 			if (!piece) continue;
 			std::vector<Move> moves;
 			piece->giveMovements(moves, sf::Vector2i(x, y), this);
@@ -261,13 +261,15 @@ double Station::evaluate()
 			double movementFreedomBonus = 0;
 			if (piece->getCode() != PAWN) {
 				// Pieces get bonus evaluation based on their freedom to move
-				movementFreedomBonus = moves.size() * 0.01f;
+				movementFreedomBonus = moves.size() * 0.01;
 			}
 			else {
 				// Reward pawns for moving forward
-				movementFreedomBonus = (piece->getColor() ? 8 - y : y) * 0.5f;
+				movementFreedomBonus = (piece->getColor() ? 8 - y : y) * 0.5;
 			}
-			double value = (pieceValues[piece->getCode()] + movementFreedomBonus);
+
+			int pieceSquereValue = pieceSquareTable[piece->getCode()][y][piece->getColor() ? x : 7 - x];
+			double value = (pieceValues[piece->getCode()] + movementFreedomBonus + pieceSquereValue);
 
 			if (piece->getColor()) {
 				white = value;
@@ -353,7 +355,7 @@ bool Station::setIsKingInDanger()
 	{
 		for (int x = 0; x < 8; x++)
 		{
-			Piece* piece = board[y][x];
+			Piece* piece = board[y][x].get();
 			if (!piece) continue;
 			if (piece->getColor() == _isWhiteTurn) {
 				if (piece->getCode() == KING) King = sf::Vector2i(x, y);

@@ -50,7 +50,7 @@ void UserInterface::drawBoard(sf::RenderWindow* window)
 			square.setPosition(sf::Vector2f(x * 100 + 100, y * 100));
 			window->draw(square);
 
-			Piece* piece = station->board[y][x];
+			Piece* piece = station->board[y][x].get();
 			if (piece != 0) {
 				if (piece->isDragging()) {
 					continue;
@@ -129,7 +129,7 @@ void UserInterface::startDrag(sf::Vector2i pos)
 {
 	if (this->draggedPiece) return;
 	if (promoteBeforeMove) return;
-	Piece* piece = station->board[pos.y][pos.x];
+	Piece* piece = station->board[pos.y][pos.x].get();
 	if (!piece) return;
 	if (piece->getColor() != station->_isWhiteTurn) return;
 	piece->setDragging(true);

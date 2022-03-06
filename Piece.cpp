@@ -24,7 +24,7 @@ unsigned char Piece::getCode()
 
 bool Piece::isValidPosition(sf::Vector2i pos, Station* station, bool& shouldStop)
 {
-	Piece* piece = station->board[pos.y][pos.x];
+	Piece* piece = station->board[pos.y][pos.x].get();
 	if (pos.x < 0 || pos.x > 7 || pos.y < 0 || pos.y > 7) return false;
 	if (piece && piece->getColor() == this->getColor()) return false;
 	if (piece && piece->getColor() != this->getColor()) shouldStop = true;

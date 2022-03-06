@@ -16,7 +16,7 @@ void Pawn::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* 
 	std::vector<Move> moveTemp;
 
 	if (isValidPosition(left, station)) {
-		Pawn* L = static_cast<Pawn*>(station->board[left.y][left.x]);
+		Pawn* L = static_cast<Pawn*>(station->board[left.y][left.x].get());
 		if (L && station->enPassantBuffer == L) {
 			Move enPassant(start, frontLeft, getColor());
 			enPassant.enPassantMove = true;
@@ -25,7 +25,7 @@ void Pawn::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* 
 	}
 
 	if (isValidPosition(right, station)) {
-		Pawn* R = static_cast<Pawn*>(station->board[right.y][right.x]);
+		Pawn* R = static_cast<Pawn*>(station->board[right.y][right.x].get());
 		if (R && R == station->enPassantBuffer) {
 			Move enPassant(start, frontRight, getColor());
 			enPassant.enPassantMove = true;
@@ -40,12 +40,12 @@ void Pawn::giveMovements(std::vector<Move>& moves, sf::Vector2i start, Station* 
 		}
 	}
 	if (isValidPosition(frontLeft, station)) {
-		Piece* FL = station->board[frontLeft.y][frontLeft.x];
+		Piece* FL = station->board[frontLeft.y][frontLeft.x].get();
 		if (FL && FL->getColor() != this->getColor()) moveTemp.push_back(Move(start, frontLeft, getColor()));
 	}
 
 	if (isValidPosition(frontRight, station)) {
-		Piece* FR = station->board[frontRight.y][frontRight.x];
+		Piece* FR = station->board[frontRight.y][frontRight.x].get();
 		if (FR && FR->getColor() != this->getColor()) moveTemp.push_back(Move(start, frontRight, getColor()));
 	}
 

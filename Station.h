@@ -13,7 +13,7 @@ class Station {
 public:
 	bool _isMainStation = false;
 	Station(bool createPieces = false);
-	Piece *board[8][8];
+	std::shared_ptr<Piece> board[8][8];
 	bool _isWhiteTurn = true;
 	bool gameOver = false;
 

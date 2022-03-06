@@ -13,7 +13,7 @@ bool King::canCastle(direction direction, Station* station)
     do {
         toLeft ? index-- : index++;
 
-        adPiece = station->board[y][index];
+        adPiece = station->board[y][index].get();
     } while (adPiece == 0 && index > 0 && index < 7);
 
 
