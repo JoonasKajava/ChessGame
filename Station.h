@@ -35,4 +35,6 @@ public:
 
 	bool setIsKingInDanger();
 	bool getIsKingInDanger();
+
+	std::string getHash();
 };

@@ -9,6 +9,9 @@
 #include "Pawn.h"
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
+
+
 Station::Station(bool createPieces)
 {
 	_isMainStation = createPieces;
@@ -268,22 +271,24 @@ double Station::evaluate()
 				movementFreedomBonus = (piece->getColor() ? 8 - y : y) * 0.5;
 			}
 
-			int pieceSquereValue = pieceSquareTable[piece->getCode()][y][piece->getColor() ? x : 7 - x];
-			double value = (pieceValues[piece->getCode()] + movementFreedomBonus + pieceSquereValue);
+			int pieceSquereValue = pieceSquareTable[piece->getCode()][piece->getColor() ? y : 7 - y][x];
+			double value = pieceValues[piece->getCode()] + movementFreedomBonus + pieceSquereValue;
 
 			if (piece->getColor()) {
-				white = value;
+				white += value;
 			}
 			else {
-				black = value;
+				black += value;
 			}
 
 		}
 
-	return white - black;
+	return white-black;
 }
 
 int minimaxCounter = 0;
+
+std::unordered_map<std::string, MinMaxReturn> miniMaxMemory;
 
 MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station)
 {
@@ -314,6 +319,7 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 
 	if (depth == 0) {
 		minMax.evaluationValue = station->evaluate();
+		std::cout << "Evaluation for " << (station->_isWhiteTurn ? "white" : "black") << " " << minMax.evaluationValue << std::endl;
 		return minMax;
 	}
 
@@ -325,8 +331,16 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 		newStation = *station;
 		newStation._isMainStation = false;
 		newStation.movePiece(move);
-
-		MinMaxReturn score = miniMax(alpha, beta, depth - 1, &newStation);
+		std::string hash = newStation.getHash() + std::to_string(newStation._isWhiteTurn);
+		auto _score = miniMaxMemory.find(hash);
+		MinMaxReturn score;
+		if (_score == miniMaxMemory.end()) {
+			score = miniMax(alpha, beta, depth - 1, &newStation);
+			miniMaxMemory.insert(std::make_pair(hash, score));
+		}
+		else {
+			score = _score->second;
+		}
 		score.bestMove = move;
 
 
@@ -376,5 +390,19 @@ bool Station::setIsKingInDanger()
 bool Station::getIsKingInDanger()
 {
 	return _isKingInDanger;
+}
+
+std::string Station::getHash()
+{
+	std::string result = "";
+	for (char y = 0; y < 8; y++)
+	for (char x = 0; x < 8; x++)
+	{
+		Piece* piece = board[y][x].get();
+		result += piece ? std::to_string(piece->getCode()) : "-";
+
+	}
+
+	return result;
 }
 

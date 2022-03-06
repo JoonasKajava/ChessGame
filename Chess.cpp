@@ -25,7 +25,8 @@ int main()
 
             sf::Clock clock;
             minimaxCounter = 0;
-            MinMaxReturn botMovement = station.miniMax(MinMaxReturn(-INFINITY), MinMaxReturn(INFINITY), 4, &station);
+            MinMaxReturn botMovement = station.miniMax(MinMaxReturn(-INFINITY), MinMaxReturn(INFINITY), 2, &station);
+            std::cout << "Best move had evaluation of " << botMovement.evaluationValue << std::endl;
             station.movePiece(botMovement.bestMove);
 
             sf::Time elapsed = clock.getElapsedTime();
