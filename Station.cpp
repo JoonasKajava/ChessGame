@@ -9,7 +9,6 @@
 #include "Pawn.h"
 #include <algorithm>
 #include <iostream>
-#include <unordered_map>
 
 
 Station::Station(bool createPieces)
@@ -119,12 +118,12 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	}
 
 	board[move.start.y][move.start.x] = nullptr;
-	Piece* captured = board[move.end.y][move.end.x].get();
+	std::shared_ptr<Piece> captured = board[move.end.y][move.end.x];
 	if (captured) {
 		captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
 	}
 	if (move.enPassantMove) {
-		Piece* captured = board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x].get();
+		std::shared_ptr<Piece> captured = board[move.end.y + (move.isWhite ? 1 : -1)][move.end.x];
 		if (captured) {
 			captured->getColor() ? _whiteJail.addPiece(captured) : _blackJail.addPiece(captured);
 		}
@@ -288,8 +287,6 @@ double Station::evaluate()
 
 int minimaxCounter = 0;
 
-std::unordered_map<std::string, MinMaxReturn> miniMaxMemory;
-
 MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station)
 {
 	minimaxCounter++;
@@ -319,7 +316,6 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 
 	if (depth == 0) {
 		minMax.evaluationValue = station->evaluate();
-		std::cout << "Evaluation for " << (station->_isWhiteTurn ? "white" : "black") << " " << minMax.evaluationValue << std::endl;
 		return minMax;
 	}
 
@@ -331,16 +327,8 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 		newStation = *station;
 		newStation._isMainStation = false;
 		newStation.movePiece(move);
-		std::string hash = newStation.getHash() + std::to_string(newStation._isWhiteTurn);
-		auto _score = miniMaxMemory.find(hash);
-		MinMaxReturn score;
-		if (_score == miniMaxMemory.end()) {
-			score = miniMax(alpha, beta, depth - 1, &newStation);
-			miniMaxMemory.insert(std::make_pair(hash, score));
-		}
-		else {
-			score = _score->second;
-		}
+		MinMaxReturn score = miniMax(alpha, beta, depth - 1, &newStation);
+
 		score.bestMove = move;
 
 
