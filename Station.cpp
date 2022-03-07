@@ -70,7 +70,7 @@ void Station::giveAllLegalMoves(std::vector<Move>& list)
 		Station newStation = *this;
 		newStation._isMainStation = false;
 		newStation.movePiece(move, true);
-		if (!newStation.getIsKingInDanger()) {
+		if (!newStation.getIsKingInDanger(_isWhiteTurn)) {
 			list.push_back(move);
 		}
 	}
@@ -146,15 +146,15 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		}
 	}
 	if (shouldEndTurn) {
-		_isKingInDanger = setIsKingInDanger();
 		_isWhiteTurn = !_isWhiteTurn;
+		setKingsInDanger();
 		if (!_isMainStation) return;
 
 		std::vector<Move> moves;
 		this->giveAllLegalMoves(moves);
 		if (moves.size() == 0) {
 			gameOver = true;
-			std::cout << (_isKingInDanger ? "Win!" : "Draw!");
+			std::cout << (getIsKingInDanger(_isWhiteTurn) ? "Win!" : "Draw!");
 		}
 
 	}
@@ -303,11 +303,13 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 	if (moves.size() == 0) {
 
 		// Matti
-		if (station->getIsKingInDanger()) {
+		if (station->getIsKingInDanger(!_isWhiteTurn)) {
 			minMax.evaluationValue = INFINITY * -modifier;
+			std::cout << "eval infinity\n";
 		}
 		else {
 			minMax.evaluationValue = 0;
+			std::cout << "eval 0\n";
 		}
 		return minMax;
 	}
@@ -348,36 +350,54 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 	return isMax ? alpha : beta;
 }
 
-bool Station::setIsKingInDanger()
+void Station::setKingsInDanger()
 {
-	sf::Vector2i King;
+	_isBlackKingInDanger = false;
+	_isWhiteKingInDanger = false;
+	sf::Vector2i whiteKing;
+	sf::Vector2i blackKing;
 
-	std::vector<Move> enemyMovements;
+	std::vector<Move> whiteMoves;
+	std::vector<Move> blackMoves;
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
 		{
 			Piece* piece = board[y][x].get();
 			if (!piece) continue;
-			if (piece->getColor() == _isWhiteTurn) {
-				if (piece->getCode() == KING) King = sf::Vector2i(x, y);
-				continue;
+			if (piece->getCode() == KING) {
+				if (piece->getColor()) {
+					whiteKing = sf::Vector2i(x, y);
+				}
+				else {
+					blackKing = sf::Vector2i(x, y);
+				}
 			}
-			piece->giveMovements(enemyMovements, sf::Vector2i(x, y), this);
+			if (piece->getColor()) {
+				piece->giveMovements(whiteMoves, sf::Vector2i(x, y), this);
+			}
+			else {
+				piece->giveMovements(blackMoves, sf::Vector2i(x, y), this);
+			}
+			
 		}
 	}
-	for (Move& enemyMove : enemyMovements) {
-		if (enemyMove.end == King) {
-			return true;
+	for (Move& move : whiteMoves) {
+		if (move.end == blackKing) {
+			_isBlackKingInDanger = true;
 		}
 	}
 
-	return false;
+	for (Move& move : blackMoves) {
+		if (move.end == whiteKing) {
+			_isWhiteKingInDanger = true;
+		}
+	}
 }
 
-bool Station::getIsKingInDanger()
+bool Station::getIsKingInDanger(bool isWhite)
 {
-	return _isKingInDanger;
+	return isWhite ? _isWhiteKingInDanger : _isBlackKingInDanger;
 }
 
 std::string Station::getHash()

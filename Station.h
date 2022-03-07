@@ -8,7 +8,8 @@
 class Pawn;
 
 class Station {
-	bool _isKingInDanger = false;
+	bool _isWhiteKingInDanger = false;
+	bool _isBlackKingInDanger = false;
 
 public:
 	bool _isMainStation = false;
@@ -33,8 +34,8 @@ public:
 
 	MinMaxReturn miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station);
 
-	bool setIsKingInDanger();
-	bool getIsKingInDanger();
+	void setKingsInDanger();
+	bool getIsKingInDanger(bool isWhite);
 
 	std::string getHash();
 };
