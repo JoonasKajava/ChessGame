@@ -6,7 +6,7 @@ extern int minimaxCounter;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1220, 900), "Nimi :D", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(1500, 900), "Nimi :D", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
     Station station(true);
     UserInterface ui(&station);

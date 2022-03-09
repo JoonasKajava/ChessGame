@@ -160,6 +160,7 @@
     <ClCompile Include="Jail.cpp" />
     <ClCompile Include="King.cpp" />
     <ClCompile Include="Knight.cpp" />
+    <ClCompile Include="MoveList.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Piece.cpp" />
     <ClCompile Include="PromotionSelect.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Knight.h" />
     <ClInclude Include="MinMaxReturn.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="MoveList.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Piece.h" />
     <ClInclude Include="PromotionSelect.h" />
