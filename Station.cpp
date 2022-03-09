@@ -364,11 +364,11 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 		// Matti
 		if (station->getIsKingInDanger(isMax)) {
 			minMax.evaluationValue = INFINITY * -modifier;
-			std::cout << "eval infinity \n";
+			//std::cout << "eval infinity \n";
 		}
 		else {
 			minMax.evaluationValue = 0;
-			std::cout << "eval 0\n";
+			//std::cout << "eval 0\n";
 		}
 		return minMax;
 	}
