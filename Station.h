@@ -16,7 +16,7 @@ public:
 	std::shared_ptr<Piece> board[8][8];
 	bool _isWhiteTurn = true;
 	bool gameOver = false;
-
+	std::vector<Move> _moves;
 
 	Jail _whiteJail = Jail(sf::Vector2f(910, 510), sf::Vector2f(300, 300));
 	Jail _blackJail = Jail(sf::Vector2f(910, 10), sf::Vector2f(300, 300));

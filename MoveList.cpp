@@ -3,10 +3,8 @@
 
 void MoveList::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	target.draw(_fence);
+	target.draw(_text);
 
-	for (std::shared_ptr<Piece> piece : _pieces) {
-
-	}
 }
 
 MoveList::MoveList(sf::Vector2f position, sf::Vector2f size) {
@@ -17,5 +15,20 @@ MoveList::MoveList(sf::Vector2f position, sf::Vector2f size) {
 	_position = position;
 	_size = size;
 
-	_moves = ;
+	_font.loadFromFile("./Resources/arial.ttf");
+	_text.setFont(_font);
+	_text.setCharacterSize(16);
+	_text.setPosition(_position + sf::Vector2f(5, 5));
+	_text.setFillColor(sf::Color::Black);
+	
+}
+
+void MoveList::UpdateString()
+{
+	std::string moves;
+	for (Move &move:station->_moves) {
+		moves += (move.isWhite ? "white " : "black ") + (std::string)move + "\n";
+
+	}
+	_text.setString(moves);
 }

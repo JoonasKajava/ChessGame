@@ -2,6 +2,7 @@
 #include "Station.h"
 #include "SFML/Graphics.hpp"
 #include "PromotionSelect.h"
+#include "MoveList.h"
 
 class UserInterface {
 private:
@@ -15,6 +16,7 @@ private:
 
 	bool promoteBeforeMove = false;
 	Move* promotionMove = nullptr;
+	MoveList _movesList = MoveList(sf::Vector2f(1250, 5), sf::Vector2f(240, 890));
 
 	void startDrag(sf::Vector2i pos);
 	void endDrag(sf::Vector2i pos);

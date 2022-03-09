@@ -6,6 +6,7 @@
 #include <set>
 #include <algorithm>
 
+
 UserInterface::UserInterface(Station* _station)
 {
 	_font.loadFromFile("./Resources/arial.ttf");
@@ -17,6 +18,8 @@ UserInterface::UserInterface(Station* _station)
 
 	_turnText.setOutlineColor(sf::Color::Black);
 	_turnText.setOutlineThickness(2.0f);
+
+	_movesList.station = _station;
 }
 
 void UserInterface::drawBoard(sf::RenderWindow* window)
@@ -90,6 +93,8 @@ void UserInterface::drawStatus(sf::RenderWindow* window)
 
 	window->draw(station->_blackJail);
 	window->draw(station->_whiteJail);
+	_movesList.UpdateString();
+	window->draw(_movesList);
 
 	if (promoteBeforeMove) window->draw(_promotionSelect);
 }

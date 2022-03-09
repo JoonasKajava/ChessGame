@@ -147,9 +147,10 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 	}
 	if (shouldEndTurn) {
 		_isKingInDanger = setIsKingInDanger();
+		_moves.push_back(move);
 		_isWhiteTurn = !_isWhiteTurn;
 		if (!_isMainStation) return;
-
+		
 		std::vector<Move> moves;
 		this->giveAllLegalMoves(moves);
 		if (moves.size() == 0) {
