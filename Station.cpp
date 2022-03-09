@@ -53,7 +53,7 @@ Station::Station(bool createPieces)
 	board[7][6] = std::make_shared < Knight>(White);
 	board[7][7] = std::make_shared < Rook>(White);
 
-	setupFoolsMate(false);
+	//setupFoolsMate(false);
 }
 
 void Station::giveAllLegalMoves(std::vector<Move>& list)
