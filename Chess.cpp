@@ -14,7 +14,12 @@ void handleBot(Station* station) {
 
     sf::Clock clock;
     minimaxCounter = 0;
-    MinMaxReturn botMovement = station->miniMax(MinMaxReturn(-INFINITY), MinMaxReturn(INFINITY), 4, station);
+
+    MinMaxReturn min(-9999);
+    MinMaxReturn max(9999);
+    Move move;
+
+    MinMaxReturn botMovement = station->miniMax(min, max, 4, station, move);
     std::cout << "Best move (" << (std::string)botMovement.bestMove << ") had evaluation of " << botMovement.evaluationValue << std::endl;
     if (botMovement.bestMove.start == botMovement.bestMove.end) {
         std::cout << "Bot didn't know what to do\n";

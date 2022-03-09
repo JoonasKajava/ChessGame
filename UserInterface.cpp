@@ -17,6 +17,7 @@ UserInterface::UserInterface(Station* _station)
 
 	_turnText.setOutlineColor(sf::Color::Black);
 	_turnText.setOutlineThickness(2.0f);
+
 }
 
 void UserInterface::drawBoard(sf::RenderWindow* window)
@@ -80,10 +81,18 @@ void UserInterface::drawBoard(sf::RenderWindow* window)
 
 void UserInterface::drawStatus(sf::RenderWindow* window)
 {
-	_turnText.setFillColor(station->_isWhiteTurn ? sf::Color::White : sf::Color::Black);
-	sf::FloatRect bounds = _turnText.getGlobalBounds();
 
-	_turnText.setString(station->_isWhiteTurn ? "White turn" : "Black turn");
+
+	if (station->gameOver) {
+		_turnText.setFillColor(station->winner ? sf::Color::Black : sf::Color::White);
+		_turnText.setString(station->winner ? "Black Wins!" : "White Wins!");
+	}
+	else {
+		_turnText.setFillColor(station->_isWhiteTurn ? sf::Color::White : sf::Color::Black);
+		_turnText.setString(station->_isWhiteTurn ? "White turn" : "Black turn");
+	}
+
+	sf::FloatRect bounds = _turnText.getGlobalBounds();
 	_turnText.setPosition(sf::Vector2f(900 + (320 / 2.0f - bounds.width / 2.0f), 400 - (bounds.height / 2.0f)));
 
 	window->draw(_turnText);
