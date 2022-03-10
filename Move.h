@@ -24,4 +24,8 @@ public:
 	operator std::string() const {
 		return static_cast<char>(97 + start.x) + std::to_string(8-start.y) + "-" + static_cast<char>(97 + end.x) + std::to_string(8 - end.y);
 	}
+
+	bool isValid() {
+		return !(start.x == end.x && start.y == end.y);
+	}
 };

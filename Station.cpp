@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <iostream>
 
+using namespace std;
+
 
 Station::Station(bool createPieces)
 {
@@ -50,6 +52,8 @@ Station::Station(bool createPieces)
 	board[7][5] = std::make_shared < Bishop>(White);
 	board[7][6] = std::make_shared < Knight>(White);
 	board[7][7] = std::make_shared < Rook>(White);
+
+	//setupFoolsMate(false);
 }
 
 void Station::giveAllLegalMoves(std::vector<Move>& list)
@@ -70,10 +74,61 @@ void Station::giveAllLegalMoves(std::vector<Move>& list)
 		Station newStation = *this;
 		newStation._isMainStation = false;
 		newStation.movePiece(move, true);
-		if (!newStation.getIsKingInDanger()) {
+		if (!newStation.getIsKingInDanger(_isWhiteTurn)) {
 			list.push_back(move);
 		}
 	}
+}
+
+void Station::setupFoolsMate(bool forWhite)
+{
+	for (int y = 0; y < 8; y++)
+	{
+		for (int x = 0; x < 8; x++)
+		{
+			board[y][x] = nullptr;
+		}
+	}
+
+	board[0][0] = std::make_shared<Rook>(Black);
+	board[0][1] = std::make_shared<Knight>(Black);
+	board[0][2] = std::make_shared<Bishop>(Black);
+	board[0][3] = std::make_shared<Queen>(Black);
+	board[0][4] = std::make_shared<King>(Black);
+	board[0][5] = std::make_shared<Bishop>(Black);
+	board[0][6] = std::make_shared<Knight>(Black);
+	board[0][7] = std::make_shared<Rook>(Black);
+
+
+	board[1][0] = std::make_shared<Pawn>(Black);
+	board[1][1] = std::make_shared<Pawn>(Black);
+	board[1][2] = std::make_shared<Pawn>(Black);
+	board[1][3] = std::make_shared<Pawn>(Black);
+	board[forWhite ? 2 : 1][4] = std::make_shared<Pawn>(Black);
+	board[forWhite ? 3 : 2][5] = std::make_shared<Pawn>(Black);
+	board[forWhite ? 1 : 3][6] = std::make_shared<Pawn>(Black);
+	board[1][7] = std::make_shared<Pawn>(Black);
+
+	board[6][1] = std::make_shared<Pawn>(White);
+	board[6][0] = std::make_shared<Pawn>(White);
+	board[6][2] = std::make_shared<Pawn>(White);
+	board[6][3] = std::make_shared<Pawn>(White);
+	board[forWhite ? 6 : 5][4] = std::make_shared<Pawn>(White);
+	board[forWhite ? 5 : 6][5] = std::make_shared<Pawn>(White);
+	board[forWhite ? 4 : 6][6] = std::make_shared<Pawn>(White);
+	board[6][7] = std::make_shared<Pawn>(White);
+
+
+
+
+	board[7][0] = std::make_shared < Rook>(White);
+	board[7][1] = std::make_shared < Knight>(White);
+	board[7][2] = std::make_shared < Bishop>(White);
+	board[7][3] = std::make_shared < Queen>(White);
+	board[7][4] = std::make_shared < King>(White);
+	board[7][5] = std::make_shared < Bishop>(White);
+	board[7][6] = std::make_shared < Knight>(White);
+	board[7][7] = std::make_shared < Rook>(White);
 }
 
 
@@ -155,7 +210,8 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		this->giveAllLegalMoves(moves);
 		if (moves.size() == 0) {
 			gameOver = true;
-			std::cout << (_isKingInDanger ? "Win!" : "Draw!");
+			winner = _isWhiteTurn;
+			std::cout << (getIsKingInDanger(_isWhiteTurn) ? "Win!\n" : "Draw!\n");
 		}
 
 	}
@@ -288,11 +344,14 @@ double Station::evaluate()
 
 int minimaxCounter = 0;
 
-MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station)
+MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station, Move _move)
 {
 	minimaxCounter++;
 	MinMaxReturn minMax;
+
 	bool isMax = station->_isWhiteTurn;
+
+	minMax.bestMove = _move;
 
 	std::vector<Move> moves;
 
@@ -302,13 +361,15 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 
 
 	if (moves.size() == 0) {
-
+		
 		// Matti
-		if (station->getIsKingInDanger()) {
+		if (station->getIsKingInDanger(isMax)) {
 			minMax.evaluationValue = INFINITY * -modifier;
+			//std::cout << "eval infinity \n";
 		}
 		else {
 			minMax.evaluationValue = 0;
+			//std::cout << "eval 0\n";
 		}
 		return minMax;
 	}
@@ -328,20 +389,31 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 		newStation = *station;
 		newStation._isMainStation = false;
 		newStation.movePiece(move);
-		MinMaxReturn score = miniMax(alpha, beta, depth - 1, &newStation);
+		MinMaxReturn score = miniMax(alpha, beta, depth - 1, &newStation, move);
 
 		score.bestMove = move;
 
 
 		if (isMax) {
-			if (score.evaluationValue >= beta.evaluationValue)
+			if (score.evaluationValue >= beta.evaluationValue) {
+				if (!beta.bestMove.isValid()) beta.bestMove = move;
 				return beta;
-			if (score.evaluationValue > alpha.evaluationValue) alpha = score;
+			}
+				
+			if (score.evaluationValue > alpha.evaluationValue) {
+				alpha.bestMove = score.bestMove;
+				alpha.evaluationValue = score.evaluationValue;
+			}
 		}
 		else {
-			if (score.evaluationValue <= alpha.evaluationValue)
+			if (score.evaluationValue <= alpha.evaluationValue) {
+				if (!alpha.bestMove.isValid()) alpha.bestMove = move;
 				return alpha;
-			if (score.evaluationValue < beta.evaluationValue) beta = score;
+			}
+			if (score.evaluationValue < beta.evaluationValue) {
+				beta.bestMove = score.bestMove;
+				beta.evaluationValue = score.evaluationValue;
+			}
 		}
 	}
 
@@ -349,36 +421,54 @@ MinMaxReturn Station::miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, 
 	return isMax ? alpha : beta;
 }
 
-bool Station::setIsKingInDanger()
+void Station::setKingsInDanger()
 {
-	sf::Vector2i King;
+	_isBlackKingInDanger = false;
+	_isWhiteKingInDanger = false;
+	sf::Vector2i whiteKing;
+	sf::Vector2i blackKing;
 
-	std::vector<Move> enemyMovements;
+	std::vector<Move> whiteMoves;
+	std::vector<Move> blackMoves;
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
 		{
 			Piece* piece = board[y][x].get();
 			if (!piece) continue;
-			if (piece->getColor() == _isWhiteTurn) {
-				if (piece->getCode() == KING) King = sf::Vector2i(x, y);
-				continue;
+			if (piece->getCode() == KING) {
+				if (piece->getColor()) {
+					whiteKing = sf::Vector2i(x, y);
+				}
+				else {
+					blackKing = sf::Vector2i(x, y);
+				}
 			}
-			piece->giveMovements(enemyMovements, sf::Vector2i(x, y), this);
+			if (piece->getColor()) {
+				piece->giveMovements(whiteMoves, sf::Vector2i(x, y), this);
+			}
+			else {
+				piece->giveMovements(blackMoves, sf::Vector2i(x, y), this);
+			}
+			
 		}
 	}
-	for (Move& enemyMove : enemyMovements) {
-		if (enemyMove.end == King) {
-			return true;
+	for (Move& move : whiteMoves) {
+		if (move.end == blackKing) {
+			_isBlackKingInDanger = true;
 		}
 	}
 
-	return false;
+	for (Move& move : blackMoves) {
+		if (move.end == whiteKing) {
+			_isWhiteKingInDanger = true;
+		}
+	}
 }
 
-bool Station::getIsKingInDanger()
+bool Station::getIsKingInDanger(bool isWhite)
 {
-	return _isKingInDanger;
+	return isWhite ? _isWhiteKingInDanger : _isBlackKingInDanger;
 }
 
 std::string Station::getHash()

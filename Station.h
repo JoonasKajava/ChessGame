@@ -8,7 +8,8 @@
 class Pawn;
 
 class Station {
-	bool _isKingInDanger = false;
+	bool _isWhiteKingInDanger = false;
+	bool _isBlackKingInDanger = false;
 
 public:
 	bool _isMainStation = false;
@@ -17,11 +18,16 @@ public:
 	bool _isWhiteTurn = true;
 	bool gameOver = false;
 	std::vector<Move> _moves;
+	bool winner = false;
+
 
 	Jail _whiteJail = Jail(sf::Vector2f(910, 510), sf::Vector2f(300, 300));
 	Jail _blackJail = Jail(sf::Vector2f(910, 10), sf::Vector2f(300, 300));
 
 	void giveAllLegalMoves(std::vector<Move>& list);
+
+	// For testing
+	void setupFoolsMate(bool forWhite);
 
 	Pawn *enPassantBuffer = 0;
 
@@ -31,10 +37,10 @@ public:
 
 	double evaluate();
 
-	MinMaxReturn miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station);
+	MinMaxReturn miniMax(MinMaxReturn alpha, MinMaxReturn beta, int depth, Station* station, Move _move);
 
-	bool setIsKingInDanger();
-	bool getIsKingInDanger();
+	void setKingsInDanger();
+	bool getIsKingInDanger(bool isWhite);
 
 	std::string getHash();
 };
