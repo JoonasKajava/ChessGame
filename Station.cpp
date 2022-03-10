@@ -201,7 +201,7 @@ void Station::movePiece(Move move, bool shouldEndTurn)
 		}
 	}
 	if (shouldEndTurn) {
-		_isKingInDanger = setIsKingInDanger();
+		setKingsInDanger();
 		_moves.push_back(move);
 		_isWhiteTurn = !_isWhiteTurn;
 		if (!_isMainStation) return;

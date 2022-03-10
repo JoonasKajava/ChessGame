@@ -26,9 +26,11 @@ MoveList::MoveList(sf::Vector2f position, sf::Vector2f size) {
 void MoveList::UpdateString()
 {
 	std::string moves;
-	for (Move &move:station->_moves) {
-		moves += (move.isWhite ? "white " : "black ") + (std::string)move + "\n";
 
+	for (int i = station->_moves.size() - 1; i >= 0; i--) {
+		Move& move = station->_moves[i];
+		moves += (move.isWhite ? "white " : "black ") + (std::string)move + "\n";
 	}
+
 	_text.setString(moves);
 }
